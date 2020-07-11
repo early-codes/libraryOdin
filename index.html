@@ -1,0 +1,66 @@
+
+
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <title>Library Odin</title>
+        <meta charset="UTF-8"/>
+    </head>
+
+    <body>
+        
+        <div id="main">
+            <header id="header">
+                <div id="name" >
+                    <h1>Library Odin!</h1>
+                </div>                    
+                <div id="addButton">
+                    <button type="button">Add Book</button>
+                </div>
+            </header>
+        </div>
+
+    </body>
+</html>
+<style>
+    body {
+        width: 80%;
+        margin: 3% auto;
+    }
+    #header {
+        height: 200px;
+        margin: 0 auto;
+    }
+    #header h1 {
+        float: left;
+        margin: 0 auto;
+    }
+    #addButton {
+        float: right;
+        height: 40px;
+        width: 100px;
+        padding: 10px;
+        margin: 0 auto;
+    }
+    #addButton button {
+        padding: 5px;
+        margin: 0 auto;
+    }
+</style>
+
+<script>
+
+    let myLibrary = [];
+
+    function Book(title, author, pages, read) {
+        this.title = title;
+        this.author = author;
+        this.pages = pages;
+        this.read = read
+        this.info = function() {
+            return(this.title + " by " + this.author + ", " + this.pages + " pages, " + this.read);
+        }
+    }
+
+</script>
