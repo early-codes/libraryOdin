@@ -16,51 +16,209 @@
                     <h1>Library Odin!</h1>
                 </div>                    
                 <div id="addButton">
-                    <button type="button">Add Book</button>
+                    <button type="button" onclick="openForm()">Add Book</button>
                 </div>
             </header>
+            <div id="dataGrid">
+
+            </div>
         </div>
+        <form id="popupForm">
+            <h2 style="padding: 3px; text-align: center;">New Book</h2>
+            <h3>Title</h3>
+            <input type="text" class="submitText" id="title" required />
+            <h3>Author</h3>
+            <input type="text" class="submitText" id="author" required>
+            <h3>Pages</h3>
+            <input type="text" class="submitText" id="pages" required>
+            <h3>Read?</h3>
+            <div id="radioDiv">
+                <input class="readRadio" name="readRadio" type="radio" value="yes" checked="true">yes
+                <input class="readRadio" name="readRadio" type="radio" value="no">no
+            </div>
+            <button type="button" onclick="addBook()">Add</button>
+            <button type="button" onclick="closeForm()">Cancel</button>
+        </form>
 
     </body>
 </html>
 <style>
     body {
         width: 80%;
-        margin: 3% auto;
+        margin: 6% auto;
+        background-color: #f7efe3;
     }
     #header {
-        height: 200px;
+        height: 70px;
         margin: 0 auto;
+        background-color: #d9de87;
     }
     #header h1 {
         float: left;
+        padding-top: 15px;
         margin: 0 auto;
     }
     #addButton {
         float: right;
         height: 40px;
         width: 100px;
-        padding: 10px;
+        padding-top: 18px;
         margin: 0 auto;
     }
     #addButton button {
         padding: 5px;
         margin: 0 auto;
     }
+    #dataGrid th {
+        width: 1000px;
+        text-align: left;
+        background-color: burlywood;
+    }
+    #dataGrid #deleteTh {
+        width: 300px;
+        text-align: left;
+        background-color: burlywood;
+    }
+    #dataGrid table {
+        border: 1px solid burlywood;
+        border-color: burlywood;
+    }
+    #popupForm {
+        height: 500px;
+        width: 400px;
+        background-color: #de8d87;
+        top: 20%;
+        left: 35%;
+        border-radius: 30px;
+        position: fixed;
+        display: none;
+    }
+    #popupForm h3 {
+        padding: 10px;
+        margin: 3px 10px;
+    }
+    #popupForm input {
+        padding: 10px;
+        margin: 3px 10px;
+        width: 300px;
+        border: none;
+    }
+    #radioDiv {
+        height: 40px;
+        width: 400px;
+    }
+    #radioDiv .readRadio {
+        width: auto;
+        display: inline;
+        margin: 3px 10px;
+    }
+    #popupForm button {
+        padding: 10px;
+        margin: 3px 10px;
+        border: none;
+        border-radius: 10px;
+        width: 120px;
+    }
+
 </style>
 
 <script>
 
-    let myLibrary = [];
+    let myLibrary = [
+        {title: "a", author: "aa", pages: "aaa", read:"yes"},
+        {title: "b", author: "bb", pages: "bbb", read:"no"},
+        {title: "c", author: "cc", pages: "ccc", read:"yes"}];
 
     function Book(title, author, pages, read) {
         this.title = title;
         this.author = author;
         this.pages = pages;
-        this.read = read
-        this.info = function() {
-            return(this.title + " by " + this.author + ", " + this.pages + " pages, " + this.read);
-        }
+        this.read = read;
     }
 
+    const dataGrid = document.getElementById("dataGrid");
+    loadTable();
+    function loadTable(){
+        const bookTable = document.createElement("table");
+        var thRow = bookTable.insertRow();
+        thRow.innerHTML = `
+            <th>Title</th>
+            <th>Author</th>
+            <th>Pages</th>
+            <th>Read</th>
+            <th id="deleteTh">Delete</th>
+
+        `;
+        for (let i = 0; i < myLibrary.length; i++) {
+        var tr = bookTable.insertRow();
+            for (const prop in myLibrary[i]) {
+                var td = tr.insertCell();
+                if (prop == "read" && myLibrary[i][prop] == "yes") {
+                    td.innerHTML = `<img src="yes.png" style="width: 9%; padding: 0 30px;" id="deleteImage${i}" onClick="changeRead('yes', ${i})">`;
+                }
+                else if (prop == "read" && myLibrary[i][prop] == "no") {
+                    td.innerHTML = `<img src="no.png" style="width: 7%; padding: 0 30px;" id="deleteImage${i}" onClick="changeRead('no', ${i})">`;
+                }
+                else {
+                td.innerHTML = myLibrary[i][prop];
+                }
+            }
+            var td = tr.insertCell();
+            td.innerHTML = `<img src="delete.png" style="width: 24%; padding: 0 30px;" id="deleteImage${i}" onClick="deleteBook(${i})">` 
+        }
+        dataGrid.appendChild(bookTable);
+    }
+    function openForm() {
+        dataGrid.removeChild(dataGrid.childNodes[1]);
+        var popupForm = document.getElementById("popupForm");
+        popupForm.style.display = "block";
+        loadTable();
+    }
+    function closeForm() {
+        var popupForm = document.getElementById("popupForm");
+        popupForm.style.display = "none";
+    }
+    function addBook() {
+        let submits = document.querySelectorAll('.submitText');
+        let empty = 0;
+        submits.forEach((submit) => {
+            if (submit.value == "") {
+                empty += 1;
+            }
+        });
+        if (empty > 0) {
+            alert("Please fill all fields")
+        }
+        else {
+            let title = document.getElementById("title").value;
+            let author = document.getElementById("author").value;
+            let pages = document.getElementById("pages").value;
+            let read = document.querySelector('input[name=readRadio]:checked').value;
+            let book = new Book(title, author, pages, read);
+            myLibrary.push(book);
+            submits = document.querySelectorAll('.submitText');
+            submits.forEach((submit) => {
+                submit.value = ""
+            });
+            document.querySelector("input[value=yes]").checked = true;
+            dataGrid.removeChild(dataGrid.childNodes[1]);
+            loadTable();
+        }
+    }
+    function deleteBook(bookIndex) {
+        console.log(bookIndex);
+        myLibrary.splice(bookIndex,1);
+        dataGrid.removeChild(dataGrid.childNodes[1]);
+        loadTable();
+    }
+    function changeRead(yesno, i) {
+        if (yesno == "yes") {
+            myLibrary[i].read = "no";
+        }
+        else if (yesno == "no") {
+            myLibrary[i].read = "yes";
+        }
+        dataGrid.removeChild(dataGrid.childNodes[1]);
+        loadTable();
+    } 
 </script>
